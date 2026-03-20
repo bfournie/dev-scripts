@@ -119,8 +119,19 @@ func main() {
 
 	next(page)
 
+	// Wait for page to load
+	time.Sleep(10 * time.Second)
+
+	logrus.Info("Custom manifests")
+	err = saveFullPageScreenshot(page, filepath.Join(screenshotPath, "07-custom-manifests.png"))
+	if err != nil {
+		log.Fatalf("failed custom manifests screenshot: %v", err)
+	}
+
+	next(page)
+
 	logrus.Info("Review and start cluster installation")
-	err = review(page, filepath.Join(screenshotPath, "07-review.png"))
+	err = review(page, filepath.Join(screenshotPath, "08-review.png"))
 	if err != nil {
 		log.Fatalf("failed review page: %v", err)
 	}
@@ -128,7 +139,7 @@ func main() {
 	logrus.Info("Cluster installation started successfully.")
 	page.MustElementR("h2", "Installation progress")
 
-	err = waitForClusterConsoleLink(page, filepath.Join(screenshotPath, "08-installation-progress"))
+	err = waitForClusterConsoleLink(page, filepath.Join(screenshotPath, "09-installation-progress"))
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
@@ -216,7 +227,7 @@ func downloadCredentials(page *rod.Page, client *resty.Client, path string) erro
 	page.MustElement("#credentials-download-agreement").MustClick()
 	time.Sleep(5 * time.Second)
 
-	page.MustElementR("button", "Download credentials").MustWaitEnabled()
+	page.MustElementR("button", "Download credentials").MustWaitEnabled().MustClick()
 
 	err = saveFullPageScreenshot(page, path)
 	if err != nil {
